@@ -58,7 +58,7 @@ class Signals:
         return self.df
 
 def strat(pair, qty, open_position=False):
-    mindata = get_minute_data(pair, '1m', '100')
+    mindata = get_minute_data(pair, '1m', '70')
     techdata = apply_technicals(mindata)
     inst = Signals(techdata, 20)
     data = inst.decide()
