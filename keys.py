@@ -1,5 +1,5 @@
 import os
 
 # hidden
-api_key = 'dbDM6NZ1zCBL1ZSAsRQu4zZPlAM7hOZqTtFqbwse0oFyARgURgAKYhpLcI9UtqYX'
-api_secret = '087zIAwYSOM7yT6uaJ1qA6gtaejbXQO1U6FYt2B3Ydi5Q32AgcFHjDh226Jpc0hR'
+api_key = os.environ['api_key']
+api_secret = os.environ['api_secret']

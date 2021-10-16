@@ -1,5 +1,5 @@
 *.dat
 *.log
 *.pyc
-__pycache__/
-keys.py
+__pycache__
+keys.*
