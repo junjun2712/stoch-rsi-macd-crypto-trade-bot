@@ -137,16 +137,16 @@ def retrade():
         symbol = 'BTCUSDT',
         side = 'SELL',
         type = 'MARKET',
-        quantity = 0.00034
+        quantity = 0.00033
     )
 
 def main(args=None):
     #retrade()
-    print(get_main_balances())
+    print(get_main_free_balances())
 
     while True:
         sleep(0.5)
-        strat('BTCUSDT', 0.00034)
+        strat('BTCUSDT', 0.00033)
         sleep(5)
 
     '''
