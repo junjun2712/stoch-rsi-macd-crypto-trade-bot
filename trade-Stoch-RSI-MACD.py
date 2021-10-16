@@ -62,6 +62,7 @@ def strat(pair, qty, open_position=False):
     techdata = apply_technicals(mindata)
     inst = Signals(techdata, 10)
     data = inst.decide()
+    print(data.iloc[-1])
     #print(f'current Close is '+str(data.Close.iloc[-1]))
     if data.Buy.iloc[-1]:
         # placing order
