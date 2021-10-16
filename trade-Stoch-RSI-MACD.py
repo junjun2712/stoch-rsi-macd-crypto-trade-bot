@@ -112,7 +112,7 @@ def main(args=None):
     #print(client.get_account())
     while True:
         sleep(0.5)
-        #strat('BTCUSDT', 0.00034)
+        strat('BTCUSDT', 0.00034)
     
 if __name__ == '__main__':
     print('on run') 
