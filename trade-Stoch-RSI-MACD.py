@@ -62,7 +62,7 @@ def strat(pair, qty, open_position=False):
     df = apply_technicals(df)
     inst = Signals(df, 5)
     df = inst.decide()
-    print(f'current Close is '+str(df.Close.iloc[-1]))
+    #print(f'current Close is '+str(df.Close.iloc[-1]))
     if df.Buy.iloc[-1]:
         # placing order
         order = client.create_order(
