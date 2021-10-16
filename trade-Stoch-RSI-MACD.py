@@ -135,6 +135,7 @@ def main(args=None):
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00034)
+        sleep(5)
 
     '''
     while True:
