@@ -131,8 +131,6 @@ def main(args=None):
         if df.Buy.iloc[-1]:
             print('Order placed paps')
     '''
-
-
     
 if __name__ == '__main__':
     print('on run') 
