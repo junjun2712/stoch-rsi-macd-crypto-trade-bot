@@ -72,7 +72,7 @@ def strat(pair, qty, open_position=False):
             type='MARKET',
             quantity= qty
         )
-        print(get_main_balances())
+        print(get_main_free_balances())
         buyprice = float(buyorder['fills'][0]['price'])
         #print(order)
         frame = clean_order(buyorder)
@@ -95,7 +95,7 @@ def strat(pair, qty, open_position=False):
                 type='MARKET',
                 quantity= qty
             )
-            print(get_main_balances())
+            print(get_main_free_balances())
             #print(order)
             frame = clean_order(sellorder)
             print(frame.iloc[0][['Time', 'Side', 'Price']])
@@ -122,6 +122,16 @@ def get_main_balances():
         elif item['asset'] == 'USDT':
             print('USDT:\tFree: {}, Locked: {}'.format(item['free'], item['locked']))
 
+def get_main_free_balances():
+    btc = 0
+    usdt = 0
+    for item in client.get_account()['balances']:
+        if item['asset'] == 'BTC':
+            btc = item['free']
+        elif item['asset'] == 'USDT':
+            usdt = item['free']
+    return 'Free BTC: {}, USDT: '.format(btc, usdt)
+
 def retrade():
     retradeorder = client.create_order(
         symbol = 'BTCUSDT',
@@ -142,13 +152,13 @@ def main(args=None):
     '''
     while True:
         sleep(1)
-        df = get_minute_data('BTCUSDT', '1m', '100')
-        df = apply_technicals(df)
-        inst = Signals(df, 25)
-        inst = inst.decide()
-        print(inst.iloc[0][['Close', '%K', '%D']])
-        if inst.Buy.iloc[-1]:
-            print('Order placed paps')
+        mindata = get_minute_data('BTCUSDT', '1m', '70')
+        df = apply_technicals(mindata)
+        inst = Signals(df, 20)
+        final = inst.decide()
+        print(final)
+        #if inst.Buy.iloc[-1]:
+            #print('Order placed paps')
     '''
 if __name__ == '__main__':
     print('on run') 
