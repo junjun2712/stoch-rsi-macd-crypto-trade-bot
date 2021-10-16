@@ -130,7 +130,7 @@ def get_main_free_balances():
             btc = item['free']
         elif item['asset'] == 'USDT':
             usdt = item['free']
-    return 'Free BTC: {}, USDT: '.format(btc, usdt)
+    return 'Free BTC: {}, USDT: {}'.format(btc, usdt)
 
 def retrade():
     retradeorder = client.create_order(
