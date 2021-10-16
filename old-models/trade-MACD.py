@@ -94,8 +94,8 @@ def retrade():
 
 def main():
     get_main_balances()
-    trade_strat('BTCUSDT', 0.00034)
-    #retrade()
+    #trade_strat('BTCUSDT', 0.00034)
+    retrade()
     get_main_balances()
 
 if __name__ == '__main__':

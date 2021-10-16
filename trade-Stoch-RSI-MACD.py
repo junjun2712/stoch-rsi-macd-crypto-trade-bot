@@ -66,15 +66,15 @@ def strat(pair, qty, open_position=False):
     #print(f'current Close is '+str(data.Close.iloc[-1]))
     if data.Buy.iloc[-1]:
         # placing order
-        order = client.create_order(
+        buyorder = client.create_order(
             symbol=pair,
             side='BUY',
             type='MARKET',
             quantity= qty
         )
-        buyprice = float(order['fills'][0]['price'])
+        buyprice = float(buyorder['fills'][0]['price'])
         #print(order)
-        frame = clean_order(order)
+        frame = clean_order(buyorder)
         print(frame)
         frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
     while open_position:
@@ -85,14 +85,14 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Stop is '+str(buyprice * 0.995))
         if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.05 * buyprice:
             # removing order
-            order = client.create_order(
+            sellorder = client.create_order(
                 symbol=pair,
                 side='SELL',
                 type='MARKET',
                 quantity= qty
             )
             #print(order)
-            frame = clean_order(order)
+            frame = clean_order(sellorder)
             print(frame)
             frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
             break
@@ -116,9 +116,18 @@ def get_main_balances():
         elif item['asset'] == 'USDT':
             print('USDT:\tFree: {}, Locked: {}'.format(item['free'], item['locked']))
 
+def retrade():
+    order = client.create_order(
+        symbol = 'BTCUSDT',
+        side = 'SELL',
+        type = 'MARKET',
+        quantity = 0.00034
+    )
+
 def main(args=None):
+    #retrade()
     print(get_main_balances())
-    
+
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00034)
