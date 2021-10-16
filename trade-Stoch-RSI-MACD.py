@@ -128,8 +128,8 @@ def main(args=None):
         df = get_minute_data('BTCUSDT', '1m', '100')
         df = apply_technicals(df)
         inst = Signals(df, 25)
-        print(inst.decide()[-1])
-        if df.Buy.iloc[-1]:
+        inst = inst.decide()
+        if inst.Buy.iloc[-1]:
             print('Order placed paps')
 
 if __name__ == '__main__':
