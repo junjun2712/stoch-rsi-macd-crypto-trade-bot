@@ -77,6 +77,8 @@ def strat(pair, qty, open_position=False):
         frame = clean_order(buyorder)
         print(frame)
         frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+        open_position = True
+
     while open_position:
         sleep(0.1)
         mindata = get_minute_data(pair, '1m', '2')
