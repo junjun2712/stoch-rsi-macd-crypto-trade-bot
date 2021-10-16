@@ -75,8 +75,8 @@ def strat(pair, qty, open_position=False):
         buyprice = float(buyorder['fills'][0]['price'])
         #print(order)
         frame = clean_order(buyorder)
-        print(frame)
-        frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+        print(frame.iloc[['Time', 'Side', 'Price']])
+        #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
         open_position = True
 
     while open_position:
@@ -86,6 +86,7 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
         if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.05 * buyprice:
+            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.05))
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -95,8 +96,9 @@ def strat(pair, qty, open_position=False):
             )
             #print(order)
             frame = clean_order(sellorder)
-            print(frame)
-            frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+            print(frame.iloc[['Time', 'Side', 'Price']])
+            #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+            open_position = False
             break
 
 def clean_order(order):
@@ -141,6 +143,7 @@ def main(args=None):
         df = apply_technicals(df)
         inst = Signals(df, 25)
         inst = inst.decide()
+        print(inst.iloc[0][['Close', '%K', '%D']])
         if inst.Buy.iloc[-1]:
             print('Order placed paps')
     '''
