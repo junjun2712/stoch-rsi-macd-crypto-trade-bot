@@ -1,1 +1,1 @@
-worker: python trade-Stoch-RSI-MACD.py
+web: python trade-Stoch-RSI-MACD.py
