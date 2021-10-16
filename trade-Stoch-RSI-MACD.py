@@ -58,12 +58,12 @@ class Signals:
         return self.df
 
 def strat(pair, qty, open_position=False):
-    df = get_minute_data(pair, '1m', '100')
-    df = apply_technicals(df)
-    inst = Signals(df, 5)
-    df = inst.decide()
-    #print(f'current Close is '+str(df.Close.iloc[-1]))
-    if df.Buy.iloc[-1]:
+    mindata = get_minute_data(pair, '1m', '100')
+    techdata = apply_technicals(mindata)
+    inst = Signals(techdata, 10)
+    data = inst.decide()
+    print(f'current Close is '+str(data.Close.iloc[-1]))
+    if data.Buy.iloc[-1]:
         # placing order
         order = client.create_order(
             symbol=pair,
@@ -72,17 +72,17 @@ def strat(pair, qty, open_position=False):
             quantity= qty
         )
         buyprice = float(order['fills'][0]['price'])
-        #print(order)
+        print(order)
         frame = clean_order(order)
         print(frame)
         frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
     while open_position:
         sleep(0.1)
-        df = get_minute_data(pair, '1m', '2')
-        #print(f'Current Close '+str(df.Close.iloc[-1]))
-        #print(f'Current Target '+str(buyprice * 1.05))
-        #print(f'Current Stop is '+str(buyprice * 0.995))
-        if df.Close[-1] <= buyprice * 0.995 or df.Close[-1] >= 1.05 * buyprice:
+        mindata = get_minute_data(pair, '1m', '2')
+        print(f'Current Close '+str(mindata.Close.iloc[-1]))
+        print(f'Current Target '+str(buyprice * 1.05))
+        print(f'Current Stop is '+str(buyprice * 0.995))
+        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.05 * buyprice:
             # removing order
             order = client.create_order(
                 symbol=pair,
@@ -108,11 +108,31 @@ def clean_order(order):
     df = pd.DataFrame([relev_info])
     return df
 
+def get_main_balances():
+    for item in client.get_account()['balances']:
+        if item['asset'] == 'BTC':
+            print('BTC:\tFree: {}, Locked: {}'.format(item['free'], item['locked']))
+        elif item['asset'] == 'USDT':
+            print('USDT:\tFree: {}, Locked: {}'.format(item['free'], item['locked']))
+
 def main(args=None):
-    #print(client.get_account())
+    print(get_main_balances())
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00034)
+    
+    '''  
+    while True:
+        sleep(1)
+        df = get_minute_data('BTCUSDT', '1m', '100')
+        df = apply_technicals(df)
+        inst = Signals(df, 25)
+        print(inst.decide())
+        if df.Buy.iloc[-1]:
+            print('Order placed paps')
+    '''
+
+
     
 if __name__ == '__main__':
     print('on run') 

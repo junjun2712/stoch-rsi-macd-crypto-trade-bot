@@ -1,5 +1,5 @@
 name: Run test
-  env: # Or as an environment variable
+  env:
     api_key: ${{ secrets.API_KEY }}
     api_secret: ${{ secrets.API_SECRET_KEY }}
   run:
