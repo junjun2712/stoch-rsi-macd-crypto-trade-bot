@@ -11,7 +11,6 @@ import numpy as np
 import sqlite3
 import sqlalchemy 
 
-
 def get_minute_data(pair, interval, lookback):
     frame = pd.DataFrame(client.get_historical_klines(pair, interval, lookback + ' min ago UTC'))
     frame = frame.iloc[:,:6]
@@ -115,7 +114,6 @@ def main(args=None):
         sleep(0.5)
         #strat('BTCUSDT', 0.00034)
     
-
 if __name__ == '__main__':
     print('on run') 
     client = Client(api_key, api_secret)
