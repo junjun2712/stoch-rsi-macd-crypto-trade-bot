@@ -60,7 +60,7 @@ class Signals:
 def strat(pair, qty, open_position=False):
     mindata = get_minute_data(pair, '1m', '100')
     techdata = apply_technicals(mindata)
-    inst = Signals(techdata, 25)
+    inst = Signals(techdata, 20)
     data = inst.decide()
     #print(data.iloc[-1])
     #print(f'current Close is '+str(data.Close.iloc[-1]))
