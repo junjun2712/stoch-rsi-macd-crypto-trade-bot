@@ -110,9 +110,10 @@ def clean_order(order):
     return df
 
 def main(args=None):
-    print(client.get_account())
+    #print(client.get_account())
     while True:
         sleep(0.5)
+        print('bot running')
         #strat('BTCUSDT', 0.00034)
     
 
