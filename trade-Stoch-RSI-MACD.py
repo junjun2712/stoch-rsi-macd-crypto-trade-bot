@@ -72,10 +72,11 @@ def strat(pair, qty, open_position=False):
             type='MARKET',
             quantity= qty
         )
+        print(get_main_balances())
         buyprice = float(buyorder['fills'][0]['price'])
         #print(order)
         frame = clean_order(buyorder)
-        print(frame.iloc[['Time', 'Side', 'Price']])
+        print(frame.iloc[0][['Time', 'Side', 'Price']])
         #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
         open_position = True
 
@@ -94,9 +95,10 @@ def strat(pair, qty, open_position=False):
                 type='MARKET',
                 quantity= qty
             )
+            print(get_main_balances())
             #print(order)
             frame = clean_order(sellorder)
-            print(frame.iloc[['Time', 'Side', 'Price']])
+            print(frame.iloc[0][['Time', 'Side', 'Price']])
             #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
             open_position = False
             break
