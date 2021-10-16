@@ -60,9 +60,9 @@ class Signals:
 def strat(pair, qty, open_position=False):
     mindata = get_minute_data(pair, '1m', '100')
     techdata = apply_technicals(mindata)
-    inst = Signals(techdata, 10)
+    inst = Signals(techdata, 15)
     data = inst.decide()
-    print(data.iloc[-1])
+    #print(data.iloc[-1])
     #print(f'current Close is '+str(data.Close.iloc[-1]))
     if data.Buy.iloc[-1]:
         # placing order
@@ -118,20 +118,19 @@ def get_main_balances():
 
 def main(args=None):
     print(get_main_balances())
+    '''
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00034)
-    
-    '''  
+    '''
     while True:
         sleep(1)
         df = get_minute_data('BTCUSDT', '1m', '100')
         df = apply_technicals(df)
         inst = Signals(df, 25)
-        print(inst.decide())
+        print(inst.decide()[-1])
         if df.Buy.iloc[-1]:
             print('Order placed paps')
-    '''
 
 if __name__ == '__main__':
     print('on run') 
