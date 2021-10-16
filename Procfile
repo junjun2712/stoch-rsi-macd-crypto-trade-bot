@@ -1,0 +1,1 @@
+worker: python trade-Stoch-RSI-MACD.py

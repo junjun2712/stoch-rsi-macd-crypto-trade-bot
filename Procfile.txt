@@ -1,1 +1,0 @@
-python trade-Stoch-RSI-MACD.py
