@@ -117,7 +117,7 @@ def get_main_balances():
             print('USDT:\tFree: {}, Locked: {}'.format(item['free'], item['locked']))
 
 def retrade():
-    order = client.create_order(
+    retradeorder = client.create_order(
         symbol = 'BTCUSDT',
         side = 'SELL',
         type = 'MARKET',
@@ -131,6 +131,7 @@ def main(args=None):
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00034)
+
     '''
     while True:
         sleep(1)
