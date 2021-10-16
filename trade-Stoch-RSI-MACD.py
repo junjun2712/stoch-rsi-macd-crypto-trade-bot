@@ -73,16 +73,16 @@ def strat(pair, qty, open_position=False):
             quantity= qty
         )
         buyprice = float(order['fills'][0]['price'])
-        print(order)
+        #print(order)
         frame = clean_order(order)
         print(frame)
         frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
     while open_position:
         sleep(0.1)
         df = get_minute_data(pair, '1m', '2')
-        print(f'Current Close '+str(df.Close.iloc[-1]))
-        print(f'Current Target '+str(buyprice * 1.05))
-        print(f'Current Stop is '+str(buyprice * 0.995))
+        #print(f'Current Close '+str(df.Close.iloc[-1]))
+        #print(f'Current Target '+str(buyprice * 1.05))
+        #print(f'Current Stop is '+str(buyprice * 0.995))
         if df.Close[-1] <= buyprice * 0.995 or df.Close[-1] >= 1.05 * buyprice:
             # removing order
             order = client.create_order(
@@ -91,7 +91,7 @@ def strat(pair, qty, open_position=False):
                 type='MARKET',
                 quantity= qty
             )
-            print(order)
+            #print(order)
             frame = clean_order(order)
             print(frame)
             frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
@@ -113,7 +113,6 @@ def main(args=None):
     #print(client.get_account())
     while True:
         sleep(0.5)
-        print('bot running')
         #strat('BTCUSDT', 0.00034)
     
 
