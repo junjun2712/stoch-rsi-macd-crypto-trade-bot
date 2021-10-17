@@ -86,8 +86,8 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Close '+str(mindata.Close.iloc[-1]))
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
-        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.05 * buyprice:
-            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.05))
+        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.03 * buyprice:
+            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.03))
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -101,6 +101,7 @@ def strat(pair, qty, open_position=False):
             print(frame.iloc[0][['Time', 'Side', 'Price']])
             #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
             open_position = False
+            sleep(5)
             break
 
 def clean_order(order):
@@ -147,7 +148,6 @@ def main(args=None):
     while True:
         sleep(0.5)
         strat('BTCUSDT', 0.00033)
-        sleep(5)
 
     '''
     while True:
