@@ -86,7 +86,8 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Close '+str(mindata.Close.iloc[-1]))
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
-        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= 1.03 * buyprice:
+        #mindata.Close[-1] <= buyprice * 0.995 or s
+        if mindata.Close[-1] >= 1.03 * buyprice:
             print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.03))
             # removing order
             sellorder = client.create_order(
