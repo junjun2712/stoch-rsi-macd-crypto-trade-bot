@@ -72,12 +72,12 @@ def strat(pair, qty, open_position=False):
             type='MARKET',
             quantity= qty
         )
-        print(get_main_free_balances())
         buyprice = float(buyorder['fills'][0]['price'])
         #print(order)
-        frame = clean_order(buyorder)
-        print(frame.iloc[0][['Time', 'Side', 'Price']])
+        #frame = clean_order(buyorder)
+        #print(frame.iloc[0][['Time', 'Side', 'Price']])
         #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+        print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.996, buyprice * 1.03))
         open_position = True
 
     while open_position:
@@ -87,8 +87,7 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
         #mindata.Close[-1] <= buyprice * 0.995 or 
-        if mindata.Close[-1] <= buyprice * 0.996 or mindata.Close[-1] >= 1.03 * buyprice:
-            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.03))
+        if mindata.Close[-1] <= buyprice * 0.996 or mindata.Close[-1] >= buyprice * 1.03:
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -97,9 +96,11 @@ def strat(pair, qty, open_position=False):
                 quantity= qty
             )
             print(get_main_free_balances())
+            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.03))
+            print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
             #print(order)
-            frame = clean_order(sellorder)
-            print(frame.iloc[0][['Time', 'Side', 'Price']])
+            #frame = clean_order(sellorder)
+            #print(frame.iloc[0][['Time', 'Side', 'Price']])
             #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
             open_position = False
             sleep(5)
