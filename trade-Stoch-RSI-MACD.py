@@ -66,20 +66,23 @@ def strat(pair, qty, open_position=False):
     #print(f'current Close is '+str(data.Close.iloc[-1]))
     if data.Buy.iloc[-1]:
         # placing order
-        buyorder = client.create_order(
-            symbol=pair,
-            side='BUY',
-            type='MARKET',
-            quantity= qty
-        )
-        buyprice = float(buyorder['fills'][0]['price'])
-        #print(order)
-        #frame = clean_order(buyorder)
-        #print(frame.iloc[0][['Time', 'Side', 'Price']])
-        #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
-        print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.996, buyprice * 1.03))
-        print(get_main_free_balances())
-        open_position = True
+        try:
+            buyorder = client.create_order(
+                symbol=pair,
+                side='BUY',
+                type='MARKET',
+                quantity= qty
+            )
+            buyprice = float(buyorder['fills'][0]['price'])
+            #print(order)
+            #frame = clean_order(buyorder)
+            #print(frame.iloc[0][['Time', 'Side', 'Price']])
+            #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
+            print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.996, buyprice * 1.03))
+            print(get_main_free_balances())
+            open_position = True
+        except BinanceAPIException as e:
+            print('Error: {} ({})'.format(e.status_code, e.message))
 
     while open_position:
         sleep(0.1)
