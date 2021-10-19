@@ -64,7 +64,7 @@ def strat(pair, qty, open_position=False):
     data = inst.decide()
     #print(data.iloc[-1])
     #print(f'current Close is '+str(data.Close.iloc[-1]))
-    if data.Buy.iloc[-1] and data.Close.iloc[-1] < 61000:
+    if data.Buy.iloc[-1]:
         # placing order
         buyorder = client.create_order(
             symbol=pair,
