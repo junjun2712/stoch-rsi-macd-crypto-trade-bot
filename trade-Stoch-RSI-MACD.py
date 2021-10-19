@@ -92,7 +92,7 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
         #mindata.Close[-1] <= buyprice * 0.995 or 
-        if mindata.Close[-1] <= buyprice * 0.996 or mindata.Close[-1] >= buyprice * 1.03:
+        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= buyprice * 1.03:
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -145,7 +145,7 @@ def retrade():
         symbol = 'BTCUSDT',
         side = 'SELL',
         type = 'MARKET',
-        quantity = 0.00033
+        quantity = 0.00030
     )
 
 def main(args=None):
@@ -154,7 +154,7 @@ def main(args=None):
 
     while True:
         sleep(0.5)
-        strat('BTCUSDT', 0.00033)
+        strat('BTCUSDT', 0.00030)
 
     '''
     while True:
@@ -170,6 +170,6 @@ def main(args=None):
 if __name__ == '__main__':
     print('on run') 
     client = Client(api_key, api_secret)
-    connection = sqlite3.connect('db/BTCUSDTStoch-RSI-MACDorders.db')
-    engine = sqlalchemy.create_engine('sqlite:///db/BTCUSDTStoch-RSI-MACDorders.db')
+    #connection = sqlite3.connect('db/BTCUSDTStoch-RSI-MACDorders.db')
+    #engine = sqlalchemy.create_engine('sqlite:///db/BTCUSDTStoch-RSI-MACDorders.db')
     main()
