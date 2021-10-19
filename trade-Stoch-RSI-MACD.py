@@ -82,7 +82,8 @@ def strat(pair, qty, open_position=False):
             print(get_main_free_balances())
             open_position = True
         except BinanceAPIException as e:
-            print('Error: {} ({})'.format(e.status_code, e.message))
+            print('Error: {} ({})'.format(e.message, e.status_code))
+            sleep(5)
 
     while open_position:
         sleep(0.1)
