@@ -60,7 +60,7 @@ class Signals:
 def strat(pair, qty, open_position=False):
     mindata = get_minute_data(pair, '5m', '300')
     techdata = apply_technicals(mindata)
-    inst = Signals(techdata, 5)
+    inst = Signals(techdata, 20)
     data = inst.decide()
     if data.Buy.iloc[-1]:
         # placing order
