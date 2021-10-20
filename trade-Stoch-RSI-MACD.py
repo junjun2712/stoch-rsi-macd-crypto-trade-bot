@@ -8,8 +8,8 @@ import ta
 from time import sleep
 from keys import api_key, api_secret
 import numpy as np
-import sqlite3
-import sqlalchemy 
+#import sqlite3
+#import sqlalchemy 
 
 def get_minute_data(pair, interval, lookback):
     frame = pd.DataFrame(client.get_historical_klines(pair, interval, lookback + ' min ago UTC'))
@@ -58,12 +58,10 @@ class Signals:
         return self.df
 
 def strat(pair, qty, open_position=False):
-    mindata = get_minute_data(pair, '5m', '1500')
+    mindata = get_minute_data(pair, '5m', '300')
     techdata = apply_technicals(mindata)
-    inst = Signals(techdata, 20)
+    inst = Signals(techdata, 5)
     data = inst.decide()
-    #print(data.iloc[-1])
-    #print(f'current Close is '+str(data.Close.iloc[-1]))
     if data.Buy.iloc[-1]:
         # placing order
         try:
@@ -74,11 +72,9 @@ def strat(pair, qty, open_position=False):
                 quantity= qty
             )
             buyprice = float(buyorder['fills'][0]['price'])
-            #print(order)
             #frame = clean_order(buyorder)
-            #print(frame.iloc[0][['Time', 'Side', 'Price']])
             #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
-            print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.996, buyprice * 1.03))
+            print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.96, buyprice * 1.02))
             print(get_main_free_balances())
             open_position = True
         except BinanceAPIException as e:
@@ -88,11 +84,7 @@ def strat(pair, qty, open_position=False):
     while open_position:
         sleep(0.1)
         mindata = get_minute_data(pair, '1m', '2')
-        #print(f'Current Close '+str(mindata.Close.iloc[-1]))
-        #print(f'Current Target '+str(buyprice * 1.05))
-        #print(f'Current Stop is '+str(buyprice * 0.995))
-        #mindata.Close[-1] <= buyprice * 0.995 or 
-        if mindata.Close[-1] <= buyprice * 0.95 or mindata.Close[-1] >= buyprice * 1.03:
+        if mindata.Close[-1] <= buyprice * 0.96 or mindata.Close[-1] >= buyprice * 1.02:
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -100,12 +92,10 @@ def strat(pair, qty, open_position=False):
                 type='MARKET',
                 quantity= qty
             )
-            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.02))
+            print('Sell at stop: {}, target: {}'.format(buyprice * 0.96, buyprice * 1.02))
             print(get_main_free_balances())
             print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
-            #print(order)
             #frame = clean_order(sellorder)
-            #print(frame.iloc[0][['Time', 'Side', 'Price']])
             #frame.to_sql('BTCUSDTStoch-RSI-MACDorders', engine, if_exists='append', index=False)
             open_position = False
             sleep(5)
@@ -154,7 +144,7 @@ def main(args=None):
 
     while True:
         sleep(0.5)
-        strat('BTCUSDT', 0.00030)
+        strat('BTCUSDT', 0.00029)
 
     '''
     while True:
