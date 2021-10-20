@@ -58,7 +58,7 @@ class Signals:
         return self.df
 
 def strat(pair, qty, open_position=False):
-    mindata = get_minute_data(pair, '1m', '70')
+    mindata = get_minute_data(pair, '5m', '1500')
     techdata = apply_technicals(mindata)
     inst = Signals(techdata, 20)
     data = inst.decide()
@@ -92,7 +92,7 @@ def strat(pair, qty, open_position=False):
         #print(f'Current Target '+str(buyprice * 1.05))
         #print(f'Current Stop is '+str(buyprice * 0.995))
         #mindata.Close[-1] <= buyprice * 0.995 or 
-        if mindata.Close[-1] <= buyprice * 0.995 or mindata.Close[-1] >= buyprice * 1.02:
+        if mindata.Close[-1] <= buyprice * 0.95 or mindata.Close[-1] >= buyprice * 1.03:
             # removing order
             sellorder = client.create_order(
                 symbol=pair,
@@ -100,7 +100,7 @@ def strat(pair, qty, open_position=False):
                 type='MARKET',
                 quantity= qty
             )
-            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.03))
+            print('Sell at stop: {}, target: {}'.format(buyprice * 0.995, buyprice * 1.02))
             print(get_main_free_balances())
             print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
             #print(order)
