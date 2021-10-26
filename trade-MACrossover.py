@@ -22,7 +22,6 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
         if not open_position:
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 print('buy')
-                '''
                 try:
                     buyorder = client.create_order(
                         symbol=pair,
@@ -31,19 +30,16 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     buyprice = float(buyorder['fills'][0]['price'])
-                    print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.96, buyprice * 1.02))
+                    print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
                     print(get_main_free_balances())
                     open_position = True
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
-                    sleep(5)
-                '''
                 break
 
         if open_position:
-            if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 50) or (buyprice <= historicals['Close'] * stop_loss):
+            if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 50 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 print('sell')
-                '''
                 try:
                     buyorder = client.create_order(
                         symbol=pair,
@@ -52,13 +48,11 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     buyprice = float(buyorder['fills'][0]['price'])
-                    print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * 0.96, buyprice * 1.02))
+                    print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
                     print(get_main_free_balances())
                     open_position = False
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
-                    sleep(5)
-                '''
                 break
         
         while (timer > 0):
