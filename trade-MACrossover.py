@@ -1,6 +1,7 @@
 # trade bot
 #   strat: real-time moving average crossover (hour span)
 
+from os import close
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
 import pandas as pd
@@ -53,7 +54,8 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     sleep(5)
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
-                
+            else:
+                open_position = True
         while (timer > 0):
             sleep(600)
             #print info data
@@ -69,7 +71,7 @@ def gethistoricals(pair, ST, LT):
     closes['LT'] = closes.Close.rolling(window=LT).mean()
     #closes.dropna(inplace=True)
     closes = closes.iloc[-1]
-    print(closes)
+    print('Price: {}, rsi: {}, ST: {}, LT: {},'.format(round(closes['Close']), round(closes['rsi']), round(closes['ST']), round(closes['LT'])))
     return closes
 
 def get_main_free_balances():
