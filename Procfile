@@ -1,1 +1,1 @@
-worker: python trade-Stoch-RSI-MACD.py
+worker: python trade-MACrossover.py
