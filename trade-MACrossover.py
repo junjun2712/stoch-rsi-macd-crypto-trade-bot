@@ -35,8 +35,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     open_position = True
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
-                break
-
+                
         if open_position:
             if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 50 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 #print('sell')
@@ -54,8 +53,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     sleep(5)
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
-                break
-        
+                
         while (timer > 0):
             sleep(600)
             #print info data
@@ -84,41 +82,9 @@ def get_main_free_balances():
             usdt = item['free']
     return 'Free BTC: {}, USDT: {}'.format(btc, usdt)
 
-def createlivepriceframe(msg):
-    df = pd.DataFrame(msg)
-    df = pd.DataFrame(df[4])
-    df = pd.DataFrame(df.iloc[0])
-    df.columns = ['Price']
-    df = df.astype(float)
-    #print(df)
-    return df
-
-def liveSMA(hist, live, ST, LT):
-    liveST = (hist['ST'].values + live.Price.values) / (ST)
-    liveLT = (hist['LT'].values + live.Price.values) / (LT)
-    print('ST: {}, LT: {}'.format(liveST, liveLT))
-    if liveST > liveLT:
-        return True
-
-
-#def on_message(wsapp, message):
-    #print(message)
-
 def main(args=None):
-    '''
-    while True:
-        timer = 3600
-        while (timer > 0):
-            MAstrat('BTCUSDT', 15, 0.96)
-            sleep(600)
-            timer -= 600
-    '''
     MAstrat('BTCUSDT', 15, 0.95)
-
 
 if __name__ == '__main__':
     client = Client(api_key, api_secret)
-    #wsapp = websocket.WebSocketApp("wss://stream.binance.com:9443/ws/btcusdt@trade", on_message=on_message)
-    #wsapp.run_forever()
-    #print(pd.DataFrame(client.get_historical_klines('BTCUSDT', '1h', '1h ago UTC')))
     main()
