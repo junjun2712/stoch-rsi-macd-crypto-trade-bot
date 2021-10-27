@@ -13,7 +13,7 @@ from math import floor
 
 def MAstrat(pair, amt, stop_loss, open_position = False):
     ST = 7
-    LT = 25
+    LT = 20
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
@@ -47,8 +47,9 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         type='MARKET',
                         quantity= qty
                     )
-                    print('Sell at stop: {}, target: {}'.format(buyprice * 0.96, buyprice * 1.02))
-                    print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
+                    print('Sell at price: {}, stop: {}, target: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
+                    if(buyprice != 0):
+                        print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
                     print(get_main_free_balances())
                     open_position = False
                     sleep(5)
@@ -71,7 +72,7 @@ def gethistoricals(pair, ST, LT):
     closes['LT'] = closes.Close.rolling(window=LT).mean()
     #closes.dropna(inplace=True)
     closes = closes.iloc[-1]
-    print('Price: {}, rsi: {}, ST: {}, LT: {},'.format(round(closes['Close']), round(closes['rsi']), round(closes['ST']), round(closes['LT'])))
+    print('Price: {}, rsi: {}, ST: {}, LT: {}'.format(round(closes['Close'], 2), round(closes['rsi'], 2), round(closes['ST'], 2), round(closes['LT'], 2)))
     return closes
 
 def get_main_free_balances():
