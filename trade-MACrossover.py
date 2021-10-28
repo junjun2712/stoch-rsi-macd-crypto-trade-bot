@@ -15,11 +15,13 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
     ST = 7
     LT = 20
 
+    buyprice = 0;
+    qty = (floor(amt / gethistoricals(pair, ST, LT)['Close'] * 100000)) / 100000
+
     while True:
         historicals = gethistoricals(pair, ST, LT)
         timer = 3600
-        qty = (floor(amt / historicals['Close'] * 100000)) / 100000
-        buyprice = 0;
+        
         if not open_position:
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
@@ -31,7 +33,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     buyprice = float(buyorder['fills'][0]['price'])
-                    print('Buy at price: {}, stop: {}, target price: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
+                    print('Buy at price: {}, stop: {}, min target: {}'.format(buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
                     print(get_main_free_balances())
                     open_position = True
                 except BinanceAPIException as e:
