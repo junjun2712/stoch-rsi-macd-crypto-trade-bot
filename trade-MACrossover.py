@@ -90,7 +90,7 @@ def get_main_free_balances():
     return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, usdt, busd)
 
 def main(args=None):
-    MAstrat('BTCUSDT', 15, 0.95)
+    MAstrat('BTCBUSD', 15, 0.95)
     #print(gethistoricals('BTCBUSD', 7, 20))
 
 if __name__ == '__main__':
