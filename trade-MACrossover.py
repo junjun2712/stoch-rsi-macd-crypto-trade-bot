@@ -1,7 +1,6 @@
 # trade bot
 #   strat: real-time moving average crossover (hour span)
 
-from os import close
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
 import pandas as pd
@@ -20,7 +19,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
-        timer = 3600
+        timer = 1800
         
         if not open_position:
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
@@ -65,7 +64,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
             timer -= 600
 
 def gethistoricals(pair, ST, LT):
-    df = pd.DataFrame(client.get_historical_klines(pair, '1h', str(LT) + 'days ago UTC', '1h ago UTC'))
+    df = pd.DataFrame(client.get_historical_klines(pair, '30m', str(LT) + 'days ago UTC', '30m ago UTC'))
     closes = pd.DataFrame(df[4])
     closes.columns = ['Close']
     closes = closes.astype(float)
@@ -80,15 +79,19 @@ def gethistoricals(pair, ST, LT):
 def get_main_free_balances():
     btc = 0
     usdt = 0
+    busd = 0
     for item in client.get_account()['balances']:
         if item['asset'] == 'BTC':
             btc = item['free']
         elif item['asset'] == 'USDT':
             usdt = item['free']
-    return 'Free BTC: {}, USDT: {}'.format(btc, usdt)
+        elif item['asset'] == 'BUSD':
+            usdt = item['free']
+    return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, usdt, busd)
 
 def main(args=None):
     MAstrat('BTCUSDT', 15, 0.95)
+    #print(gethistoricals('BTCBUSD', 7, 20))
 
 if __name__ == '__main__':
     client = Client(api_key, api_secret)
