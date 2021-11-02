@@ -127,7 +127,7 @@ def get_main_free_balances():
     return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, usdt, busd)
 
 def main(args=None):
-    MAstrat('SOLBUSD', 13, 0.95)
+    MAstrat('SOLBUSD', 12, 0.95)
     #print(gethistoricals('SHIBBUSD', 7, 20))
 
 if __name__ == '__main__':
