@@ -9,13 +9,28 @@ import ta
 from time import sleep
 from decimal import *
 from math import floor
+import sqlalchemy
+from sqlalchemy import exc
 
 def MAstrat(pair, amt, stop_loss, open_position = False):
     ST = 7
     LT = 20
 
-    buyprice = 0;
-    qty = (floor(amt / gethistoricals(pair, ST, LT)['Close'] * 100000)) / 100000
+    buyprice = 0
+    prehis = gethistoricals(pair, ST, LT)['Close']
+
+    qty = floor((amt / prehis)*100)/100
+    
+    try:
+        dbres = pd.read_sql('Orders', engine)
+        if dbres.empty != True:
+            if dbres.iloc[-1].completed == False and dbres.iloc[-1].symbol == pair:
+                print('Oper order founded!')
+                buyprice = dbres.iloc[-1].price
+                qty = dbres.iloc[-1].qty
+                open_position = True
+    except exc.SQLAlchemyError:
+        print('SQLAlchemy error!')
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
@@ -34,6 +49,11 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     buyprice = float(buyorder['fills'][0]['price'])
                     print('Buy at price: {}, stop: {}, min target: {}'.format(buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
                     print(get_main_free_balances())
+                    frame = createorderframe(buyorder)
+                    try:
+                        frame.to_sql('Orders', engine, if_exists='append', index=False)
+                    except exc.SQLAlchemyError:
+                        print('SQLAlchemy error!')
                     open_position = True
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
@@ -49,9 +69,17 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     print('Sell at price: {}, stop: {}, target: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
-                    if(buyprice != 0):
+                    if buyprice != 0:
                         print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
                     print(get_main_free_balances())
+                    # actualizar orden de base de datos
+                    try:
+                        dbres = pd.read_sql('Orders', engine)
+                        if dbres.iloc[-1].symbol == pair:
+                            sql = 'update Orders set completed = 1 where id = (select max(id) from Orders)'
+                            engine.execute(sql)
+                    except exc.SQLAlchemyError:
+                        print('SQLAlchemy error!')
                     open_position = False
                     sleep(5)
                 except BinanceAPIException as e:
@@ -73,8 +101,17 @@ def gethistoricals(pair, ST, LT):
     closes['LT'] = closes.Close.rolling(window=LT).mean()
     #closes.dropna(inplace=True)
     closes = closes.iloc[-1]
-    print('Price: {}, rsi: {}, ST: {}, LT: {}'.format(round(closes['Close'], 2), round(closes['rsi'], 2), round(closes['ST'], 2), round(closes['LT'], 2)))
+    print('Price: {}, rsi: {}, ST: {}, LT: {}'.format(closes['Close'], closes['rsi'], closes['ST'], closes['LT']))
     return closes
+
+def createorderframe(msg):
+    lastsell = msg['fills'][0]
+    data = [{ "symbol": msg['symbol'], "qty": lastsell['qty'], "price": lastsell['price'], "commission": lastsell['commission'], "completed": False }]
+    df = pd.DataFrame(data)
+    df.qty = df.qty.astype(float)
+    df.price = df.price.astype(float)
+    df.commission = df.commission.astype(float)
+    return df
 
 def get_main_free_balances():
     btc = 0
@@ -90,9 +127,10 @@ def get_main_free_balances():
     return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, usdt, busd)
 
 def main(args=None):
-    MAstrat('BTCBUSD', 15, 0.95)
-    #print(gethistoricals('BTCBUSD', 7, 20))
+    MAstrat('SOLBUSD', 13, 0.95)
+    #print(gethistoricals('SHIBBUSD', 7, 20))
 
 if __name__ == '__main__':
     client = Client(api_key, api_secret)
+    engine = sqlalchemy.create_engine('sqlite:///db/MACross.db')
     main()

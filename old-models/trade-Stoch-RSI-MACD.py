@@ -8,8 +8,8 @@ import ta
 from time import sleep
 from keys import api_key, api_secret
 import numpy as np
-#import sqlite3
-#import sqlalchemy 
+import sqlite3
+import sqlalchemy 
 
 def get_minute_data(pair, interval, lookback):
     frame = pd.DataFrame(client.get_historical_klines(pair, interval, lookback + ' min ago UTC'))
@@ -161,5 +161,5 @@ if __name__ == '__main__':
     print('on run') 
     client = Client(api_key, api_secret)
     #connection = sqlite3.connect('db/BTCUSDTStoch-RSI-MACDorders.db')
-    #engine = sqlalchemy.create_engine('sqlite:///db/BTCUSDTStoch-RSI-MACDorders.db')
+    engine = sqlalchemy.create_engine('sqlite:///db/BTCUSDTStoch-RSI-MACDorders.db')
     main()
