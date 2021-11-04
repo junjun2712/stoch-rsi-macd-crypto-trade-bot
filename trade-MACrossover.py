@@ -1,16 +1,15 @@
 # trade bot
 #   strat: real-time moving average crossover (hour span)
 
+import pandas as pd
+import sqlalchemy
+import ta
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
-import pandas as pd
-from keys import api_key, api_secret
-import ta
-from time import sleep
-from decimal import *
-from math import floor
-import sqlalchemy
 from sqlalchemy import exc
+from time import sleep
+from math import floor
+from keys import api_key, api_secret
 
 def MAstrat(pair, amt, stop_loss, open_position = False):
     ST = 7
@@ -37,7 +36,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
         timer = 1800
         
         if not open_position:
-            print('Price: {}, rsi: {}, mov diff: {}'.format(historicals['Close'], round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
+            print('Price: {}, rsi: {}, ST/LT mov diff: {}'.format(historicals['Close'], round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
                 try:
@@ -60,7 +59,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     print('Error: {} ({})'.format(e.message, e.status_code))
                 
         if open_position:
-            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format((((historicals['Close'] - buyprice)/buyprice)*100),historicals['Close'], round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
+            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format(round((((historicals['Close'] - buyprice)/buyprice)*100), 3), round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
             if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 55 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 #print('sell')
                 try:
