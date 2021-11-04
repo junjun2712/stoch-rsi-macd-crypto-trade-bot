@@ -59,7 +59,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     print('Error: {} ({})'.format(e.message, e.status_code))
                 
         if open_position:
-            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format(round((((historicals['Close'] - buyprice)/buyprice)*100), 3), round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
+            print('Actual win/loss: {}%, rsi: {}, ST/LT mov diff: {}'.format(round((((historicals['Close'] - buyprice)/buyprice)*100), 3), round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
             if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 55 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 #print('sell')
                 try:
