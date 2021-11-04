@@ -37,7 +37,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
         timer = 1800
         
         if not open_position:
-            print('Price: {}, rsi: {}'.format(historicals['Close'], historicals['rsi']))
+            print('Price: {}, rsi: {}, mov diff: {}'.format(historicals['Close'], historicals['rsi'], round(historicals['SL'] - historicals['LT'], 3)))
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
                 try:
