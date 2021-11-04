@@ -37,6 +37,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
         timer = 1800
         
         if not open_position:
+            print('Price: {}, rsi: {}'.format(historicals['Close'], historicals['rsi']))
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
                 try:
@@ -59,7 +60,8 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     print('Error: {} ({})'.format(e.message, e.status_code))
                 
         if open_position:
-            if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 50 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
+            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format((((historicals['Close'] - buyprice)/buyprice)*100),historicals['Close'], historicals['rsi'], round(historicals['SL'] - historicals['LT'], 3)))
+            if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 55 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 #print('sell')
                 try:
                     sellorder = client.create_order(
@@ -101,7 +103,7 @@ def gethistoricals(pair, ST, LT):
     closes['LT'] = closes.Close.rolling(window=LT).mean()
     #closes.dropna(inplace=True)
     closes = closes.iloc[-1]
-    print('Price: {}, rsi: {}, ST: {}, LT: {}'.format(closes['Close'], closes['rsi'], closes['ST'], closes['LT']))
+    #print('Price: {}, rsi: {}, ST: {}, LT: {}'.format(closes['Close'], closes['rsi'], closes['ST'], closes['LT']))
     return closes
 
 def createorderframe(msg):
@@ -115,16 +117,16 @@ def createorderframe(msg):
 
 def get_main_free_balances():
     btc = 0
-    usdt = 0
+    sol = 0
     busd = 0
     for item in client.get_account()['balances']:
         if item['asset'] == 'BTC':
             btc = item['free']
-        elif item['asset'] == 'USDT':
-            usdt = item['free']
+        elif item['asset'] == 'SOL':
+            sol = item['free']
         elif item['asset'] == 'BUSD':
             usdt = item['free']
-    return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, usdt, busd)
+    return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, sol, busd)
 
 def main(args=None):
     MAstrat('SOLBUSD', 12, 0.95)
