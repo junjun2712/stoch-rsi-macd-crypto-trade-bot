@@ -37,7 +37,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
         timer = 1800
         
         if not open_position:
-            print('Price: {}, rsi: {}, mov diff: {}'.format(historicals['Close'], historicals['rsi'], round(historicals['SL'] - historicals['LT'], 3)))
+            print('Price: {}, rsi: {}, mov diff: {}'.format(historicals['Close'], historicals['rsi'], round(historicals['ST'] - historicals['LT'], 3)))
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
                 try:
@@ -60,7 +60,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     print('Error: {} ({})'.format(e.message, e.status_code))
                 
         if open_position:
-            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format((((historicals['Close'] - buyprice)/buyprice)*100),historicals['Close'], historicals['rsi'], round(historicals['SL'] - historicals['LT'], 3)))
+            print('Actual win/loss: {}%, rsi: {}, mov diff: {}'.format((((historicals['Close'] - buyprice)/buyprice)*100),historicals['Close'], historicals['rsi'], round(historicals['ST'] - historicals['LT'], 3)))
             if (historicals['LT'] > historicals['ST'] and historicals['rsi'] < 55 and historicals['Close'] > buyprice * 1.01) or (buyprice <= historicals['Close'] * stop_loss):
                 #print('sell')
                 try:
