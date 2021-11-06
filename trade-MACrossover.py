@@ -10,7 +10,6 @@ from sqlalchemy import exc
 from time import sleep
 from math import floor
 from keys import api_key, api_secret
-from localtests import trade
 
 def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
     ST = 7
