@@ -30,6 +30,8 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                 open_position = True
     except exc.SQLAlchemyError:
         print('SQLAlchemy error!')
+    except:
+        print('Something when wrong when trying to read orders on the database')
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
@@ -54,6 +56,8 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         frame.to_sql('Orders', engine, if_exists='append', index=False)
                     except exc.SQLAlchemyError:
                         print('SQLAlchemy error!')
+                    except:
+                        print('Something when wrong when trying to save the order into the database')
                     open_position = True
                 except BinanceAPIException as e:
                     print('Error: {} ({})'.format(e.message, e.status_code))
