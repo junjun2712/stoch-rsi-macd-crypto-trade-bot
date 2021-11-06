@@ -16,11 +16,11 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
     LT = 20
 
     pair = tradecoin.upper() + basecoin.upper()
-
+    
+    qty = 0
     buyprice = 0
-    prehis = gethistoricals(pair, ST, LT)['Close']
 
-    qty = floor((amt / prehis)*100)/100
+    stepSize = float(next((sub for sub in client.get_symbol_info(pair)['filters'] if sub['filterType'] == 'LOT_SIZE'), None)['stepSize'])
     
     try:
         dbres = pd.read_sql('Orders', engine)
@@ -30,6 +30,8 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
                 buyprice = dbres.iloc[-1].price
                 qty = dbres.iloc[-1].qty
                 open_position = True
+        else:
+            print('No orders saved in database founded')
     except exc.SQLAlchemyError:
         print('SQLAlchemy error!')
     except:
@@ -51,6 +53,9 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
         timer = 1800
         
         if not open_position:
+            actualprice = float(client.get_margin_price_index(symbol=pair)['price'])
+            qty = (amt / actualprice) - ((amt / actualprice) % stepSize)
+            
             print('Price: {}, rsi: {}, ST/LT mov diff: {}'.format(historicals['Close'], round(historicals['rsi'], 3), round(historicals['ST'] - historicals['LT'], 3)))
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
@@ -68,6 +73,7 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
                     frame = createorderframe(buyorder)
                     try:
                         frame.to_sql('Orders', engine, if_exists='append', index=False)
+                        print('Order saved in data base')
                     except exc.SQLAlchemyError:
                         print('SQLAlchemy error!')
                     except:
@@ -151,6 +157,9 @@ def getcoinbalance(symbol):
         return value
     else:
         return None
+    
+def truncateprice(n, precs):
+    return int(n * 10**precs) / 10**precs
 
 def main(args=None):
     MAstrat('SOL', 'BUSD', 12, 0.95)
