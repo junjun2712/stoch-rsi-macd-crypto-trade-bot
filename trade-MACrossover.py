@@ -34,6 +34,13 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
         print('SQLAlchemy error!')
     except:
         print('Something when wrong when trying to read orders on the database')
+    
+    if not open_position:
+        qtysold = getcoinbalance(tradecoin)
+        if qtysold > 0.01:
+            open_position = True
+            qty = (floor((qtysold * 100)))/100
+            print('{} of {} founded!, trying to sell it'.format(qty, tradecoin.upper()))
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
@@ -129,6 +136,13 @@ def getfreebalances(*symbols):
             if item['asset'] == sym.upper():
                 bal += ' | {}: {}'.format(sym.upper(), item['free'])
     return bal
+
+def getcoinbalance(symbol):
+    for item in client.get_account()['balances']:
+        if item['asset'] == symbol.upper():
+            return item['free']
+        else:
+            return None
 
 def main(args=None):
     MAstrat('SOL', 'BUSD', 12, 0.95)
