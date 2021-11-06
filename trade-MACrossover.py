@@ -35,12 +35,16 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
     except:
         print('Something when wrong when trying to read orders on the database')
     
-    if not open_position:
-        qtysold = getcoinbalance(tradecoin)
-        if qtysold > 0.01:
-            open_position = True
-            qty = (floor((qtysold * 100)))/100
-            print('{} of {} founded!, trying to sell it'.format(qty, tradecoin.upper()))
+    trade = client.get_my_trades(symbol=pair, limit=1)
+    actualQty = getcoinbalance(tradecoin)
+
+    if len(trade) > 0 and trade[0]['isBuyer'] and actualQty > float(trade[0]['qty']):
+        qty = float(trade[0]['qty'])
+        buyprice = float(trade[0]['price'])
+        open_position = True
+        print('{} of {} buyed found! Trying to sell'.format(qty, tradecoin))
+    else:
+        print('No open orders found')
 
     while True:
         historicals = gethistoricals(pair, ST, LT)
