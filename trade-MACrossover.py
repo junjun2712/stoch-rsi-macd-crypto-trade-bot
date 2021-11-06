@@ -130,7 +130,7 @@ def getfreebalances(*symbols):
     return bal
 
 def main(args=None):
-    MAstrat('SOLBUSD', 12, 0.95)
+    MAstrat('SOL', 'BUSD', 12, 0.95)
     #print(gethistoricals('SHIBBUSD', 7, 20))
 
 if __name__ == '__main__':
