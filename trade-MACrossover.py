@@ -10,10 +10,13 @@ from sqlalchemy import exc
 from time import sleep
 from math import floor
 from keys import api_key, api_secret
+from localtests import trade
 
-def MAstrat(pair, amt, stop_loss, open_position = False):
+def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
     ST = 7
     LT = 20
+
+    pair = tradecoin.upper() + basecoin.upper()
 
     buyprice = 0
     prehis = gethistoricals(pair, ST, LT)['Close']
@@ -49,8 +52,8 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     buyprice = float(buyorder['fills'][0]['price'])
-                    print('Buy at price: {}, stop: {}, min target: {}'.format(buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
-                    print(get_main_free_balances())
+                    print('Buying {} at price: {}, stop: {}, min target: {}'.format(qty, buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
+                    print(getfreebalances(tradecoin, basecoin))
                     frame = createorderframe(buyorder)
                     try:
                         frame.to_sql('Orders', engine, if_exists='append', index=False)
@@ -76,7 +79,7 @@ def MAstrat(pair, amt, stop_loss, open_position = False):
                     print('Sell at price: {}, stop: {}, target: {}'.format(buyprice, buyprice * stop_loss, buyprice * 1.01))
                     if buyprice != 0:
                         print('Win/loss: {}%'.format(round((float(sellorder['fills'][0]['price']) / buyprice - 1) * 100, 3)))
-                    print(get_main_free_balances())
+                    print(getfreebalances(tradecoin, basecoin))
                     # actualizar orden de base de datos
                     try:
                         dbres = pd.read_sql('Orders', engine)
@@ -118,18 +121,14 @@ def createorderframe(msg):
     df.commission = df.commission.astype(float)
     return df
 
-def get_main_free_balances():
-    btc = 0
-    sol = 0
-    busd = 0
+def getfreebalances(*symbols):
+    symbols = symbols[::-1]
+    bal = 'Balances'
     for item in client.get_account()['balances']:
-        if item['asset'] == 'BTC':
-            btc = item['free']
-        elif item['asset'] == 'SOL':
-            sol = item['free']
-        elif item['asset'] == 'BUSD':
-            usdt = item['free']
-    return 'Balance BTC: {}, USDT: {}, BUSD: {}'.format(btc, sol, busd)
+        for sym in symbols:
+            if item['asset'] == sym.upper():
+                bal += ' | {}: {}'.format(sym.upper(), item['free'])
+    return bal
 
 def main(args=None):
     MAstrat('SOLBUSD', 12, 0.95)
