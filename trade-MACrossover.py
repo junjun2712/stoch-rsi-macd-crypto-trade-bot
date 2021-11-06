@@ -44,6 +44,7 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
             if historicals['ST'] > historicals['LT'] and historicals['rsi'] > 60:
                 #print('buy')
                 try:
+                    print('Trying to buy {} {}'.format(qty, tradecoin.upper()))
                     buyorder = client.create_order(
                         symbol=pair,
                         side='BUY',
@@ -51,7 +52,7 @@ def MAstrat(tradecoin, basecoin, amt, stop_loss, open_position = False):
                         quantity= qty
                     )
                     buyprice = float(buyorder['fills'][0]['price'])
-                    print('Buying {} at price: {}, stop: {}, min target: {}'.format(qty, buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
+                    print('Buy at price: {}, stop: {}, min target: {}'.format(buyprice, round(buyprice * stop_loss, 2), round(buyprice * 1.01, 2)))
                     print(getfreebalances(tradecoin, basecoin))
                     frame = createorderframe(buyorder)
                     try:
