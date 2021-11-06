@@ -132,7 +132,6 @@ def getfreebalances(*symbols):
     symbols = symbols[::-1]
     bal = 'Balances'
     for item in client.get_account()['balances']:
-        print(item)
         for sym in symbols:
             if item['asset'] == sym.upper():
                 bal += ' | {}: {}'.format(sym.upper(), item['free'])
@@ -141,9 +140,8 @@ def getfreebalances(*symbols):
 def getcoinbalance(symbol):
     value = 0
     for item in client.get_account()['balances']:
-        print(item)
         if item['asset'] == symbol.upper():
-            value = item['free']
+            value = float(item['free'])
             break
     if value != 0:
         return value
