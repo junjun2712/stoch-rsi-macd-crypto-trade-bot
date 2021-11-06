@@ -132,17 +132,23 @@ def getfreebalances(*symbols):
     symbols = symbols[::-1]
     bal = 'Balances'
     for item in client.get_account()['balances']:
+        print(item)
         for sym in symbols:
             if item['asset'] == sym.upper():
                 bal += ' | {}: {}'.format(sym.upper(), item['free'])
     return bal
 
 def getcoinbalance(symbol):
+    value = 0
     for item in client.get_account()['balances']:
+        print(item)
         if item['asset'] == symbol.upper():
-            return item['free']
-        else:
-            return None
+            value = item['free']
+            break
+    if value != 0:
+        return value
+    else:
+        return None
 
 def main(args=None):
     MAstrat('SOL', 'BUSD', 12, 0.95)
